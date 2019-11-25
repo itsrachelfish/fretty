@@ -1,0 +1,28 @@
+{
+  "name": "fretty",
+  "version": "0.0.1",
+  "description": "Software to help practice the guitar",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsrachelfish/fretty.git"
+  },
+  "keywords": [
+    "guitar",
+    "chords",
+    "metronome",
+    "audio",
+    "web",
+    "audio",
+    "api"
+  ],
+  "author": "@itsRachelFish",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/itsrachelfish/fretty/issues"
+  },
+  "homepage": "https://github.com/itsrachelfish/fretty#readme"
+}

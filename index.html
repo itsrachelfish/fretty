@@ -1,15 +1,33 @@
-<html>
+<!doctype html>
+<html lang="en">
     <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
         <title>Welcome to HTML</title>
 
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
         <style>
-            body { background-color:#000; color:#eee; }
+            /* Lookin' good */
+            html, body {
+                margin: 0;
+                padding: 0;
+            }
+
+            canvas {
+                width: 100vw;
+                height: 100vh;
+                margin: 0 auto;
+                display: block;
+            }
         </style>
 
-        <script src="./index.js"></script>      
+        <script src="./node_modules/wetfish-basic/dist/basic.js"></script>
+        <script src="./index.js"></script>
     </head>
 
     <body>
-        Wetfish HTML!
+        <canvas width="800" height="800"></canvas>
     </body>
 </html>

@@ -5,6 +5,10 @@ const width = 800;
 const height = 800;
 let source, canvas, canvasContext;
 let bufferLength, dataArray;
+let rollingAverage = 0;
+const averageData = [];
+let strums = 0;
+let timeout = false;
 
 function microphoneSuccess(stream) {
     source = audioContext.createMediaStreamSource(stream);
@@ -38,12 +42,39 @@ function averageVolume() {
     return values / length;
 }
 
+function getRollingAverage() {
+    if(averageData.length > 10) {
+        averageData.shift();
+    }
+
+    let total = 0;
+
+    averageData.forEach(function(average) {
+        total += average;
+    });
+
+    rollingAverage = total /  averageData.length;
+}
 
 function draw() {
 //    analyser.getByteTimeDomainData(dataArray);
     analyser.getByteFrequencyData(dataArray);
+    let currentAverage = averageVolume();
 
-    $('.average').text(Math.round(averageVolume()).toString());
+    if(currentAverage > rollingAverage + 10) {
+        if(!timeout) {
+            strums++;
+
+            $('.average').text(strums.toString());
+
+            timeout = setTimeout(function() {
+                timeout = false;
+            }, 200);
+        }
+    }
+
+    averageData.push(currentAverage);
+    getRollingAverage();
 
     canvasContext.fillStyle = '#fff';
     canvasContext.fillRect(0, 0, width, height);

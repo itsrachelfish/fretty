@@ -1,8 +1,7 @@
 const constraints = { audio: true, video: false };
 const audioContext = new AudioContext();
 const analyser = audioContext.createAnalyser();
-const width = 800;
-const height = 800;
+let width, height;
 let source, canvas, canvasContext;
 let bufferLength, dataArray;
 let rollingAverage = 0;
@@ -87,7 +86,7 @@ function draw() {
 
     for(var i = 0; i < bufferLength; i++) {
         var v = dataArray[i] / 128;
-        var y = v * height / 2;
+        var y = height - 10 - (v * height / 2);
 
         if(i === 0) {
             canvasContext.moveTo(x, y);
@@ -98,13 +97,22 @@ function draw() {
         x += sliceWidth;
     };
 
-    canvasContext.lineTo(canvas.width, canvas.height / 2);
+    canvasContext.lineTo(canvas.width, height);
     canvasContext.stroke();
 
     requestAnimationFrame(draw);
 }
 
 $(document).ready(() => {
+    canvas = $('canvas').el[0];
+    canvasContext = canvas.getContext("2d");
+
+    width = canvas.offsetWidth;
+    height = canvas.offsetHeight;
+
+    canvasContext.canvas.width = width;
+    canvasContext.canvas.height = height;
+
     navigator.mediaDevices.getUserMedia(constraints)
     .then(microphoneSuccess)
     .catch(microphoneError);

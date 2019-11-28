@@ -61,7 +61,7 @@ function draw() {
     analyser.getByteFrequencyData(dataArray);
     let currentAverage = averageVolume();
 
-    if(currentAverage > rollingAverage + 10) {
+    if(currentAverage > rollingAverage + 5) {
         if(!timeout) {
             strums++;
 
@@ -108,4 +108,9 @@ $(document).ready(() => {
     navigator.mediaDevices.getUserMedia(constraints)
     .then(microphoneSuccess)
     .catch(microphoneError);
+
+    $('.reset').on('click', function() {
+        strums = 0;
+        $('.average').text(strums.toString());
+    });
 });

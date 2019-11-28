@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Time to get Synchronized</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <style>
+            /* Lookin' good */
+            html, body {
+                margin: 0;
+                padding: 0;
+            }
+
+            canvas {
+                width: 100vw;
+                height: 100vh;
+                margin: 0 auto;
+                display: block;
+            }
+
+            .wrap {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .count {
+                font-size: 44pt;
+            }
+
+            button {
+                margin: 1em;
+            }
+        </style>
+
+        <script src="./node_modules/wetfish-basic/dist/basic.js"></script>
+        <script src="./sync.js"></script>
+    </head>
+
+    <body>
+        <canvas></canvas>
+        <div class="wrap">
+            <div class="count">0</div>
+            <button class="start">Start</button>
+            <button class="stop">Stop</button>
+            <button class="reset">Reset</button>
+        </div>
+    </body>
+</html>

@@ -16,7 +16,7 @@ function microphoneSuccess(stream) {
     canvas = $('canvas').el[0];
     canvasContext = canvas.getContext("2d");
 
-    analyser.fftSize = 2048;
+    analyser.fftSize = 4096;
     bufferLength = analyser.frequencyBinCount;
     dataArray = new Uint8Array(bufferLength);
 

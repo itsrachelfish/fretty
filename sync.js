@@ -1,8 +1,7 @@
 const constraints = { audio: true, video: false };
-const audioContext = new AudioContext();
 
 let width, height, eighth;
-let canvas, canvasContext;
+let canvas, canvasContext, audioContext;
 let playing = false;
 let count = -3;
 let offset = -1;
@@ -15,6 +14,7 @@ let delta;
 let input = null;
 let analyser = null;
 let tempo = 1;
+let microphoneAllowed = false;
 
 function initialize() {
     eighth = width / 8;
@@ -96,9 +96,15 @@ function microphoneSuccess(stream) {
 
     input = audioContext.createMediaStreamSource(stream);
     input.connect(analyser);
+
+    microphoneAllowed = true;
+
+    playing = true;
+    requestAnimationFrame(animate);
 }
 
 function microphoneError(error) {
+    microphoneAllowed = false;
     console.error('Oh no...', error);
 }
 
@@ -124,15 +130,19 @@ $(document).ready(() => {
     canvasContext.canvas.width = width;
     canvasContext.canvas.height = height;
 
-    navigator.mediaDevices.getUserMedia(constraints)
-    .then(microphoneSuccess)
-    .catch(microphoneError);
-
     initialize();
 
     $('.start').on('click', function() {
-        playing = true;
-        requestAnimationFrame(animate);
+        if(microphoneAllowed) {
+            playing = true;
+            requestAnimationFrame(animate);
+        } else {
+            audioContext = new AudioContext();
+
+            navigator.mediaDevices.getUserMedia(constraints)
+            .then(microphoneSuccess)
+            .catch(microphoneError);
+        }
     });
 
     $('.stop').on('click', function() {

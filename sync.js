@@ -1,3 +1,6 @@
+const constraints = { audio: true, video: false };
+const audioContext = new AudioContext();
+
 let width, height, eighth;
 let canvas, canvasContext;
 let playing = false;
@@ -7,8 +10,10 @@ let offset = -1;
 let fps = 60;
 let now;
 var then = Date.now();
-var interval = 1000/fps;
-var delta;
+let interval = 1000/fps;
+let delta;
+let input = null;
+let analyser = null;
 
 function initialize() {
     eighth = width / 8;
@@ -67,7 +72,42 @@ function drawBeats() {
 }
 
 function drawWaveform() {
+    const audioData = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(audioData);
 
+    const volume = averageVolume(audioData) * 10;
+    const centerWidth = width / 2;
+    const centerHeight = height / 2;
+
+    // Draw a box at the center of the screen
+    canvasContext.fillRect(centerWidth, centerHeight - 1, 3, volume);
+    canvasContext.fillRect(centerWidth, centerHeight + 1, 3, volume * -1);
+}
+
+
+function microphoneSuccess(stream) {
+    analyser = audioContext.createAnalyser();
+    analyser.smoothingTimeConstant = 0.3;
+    analyser.fftSize = 1024;
+
+    input = audioContext.createMediaStreamSource(stream);
+    input.connect(analyser);
+}
+
+function microphoneError(error) {
+    console.error('Oh no...', error);
+}
+
+function averageVolume(array) {
+    const length = array.length;
+    let volume = 0;
+
+    for(let i = 0; i < length; i++) {
+        volume += array[i];
+    }
+
+    // Return the avarag
+    return volume / length;
 }
 
 $(document).ready(() => {
@@ -80,6 +120,10 @@ $(document).ready(() => {
     canvasContext.canvas.width = width;
     canvasContext.canvas.height = height;
 
+    navigator.mediaDevices.getUserMedia(constraints)
+    .then(microphoneSuccess)
+    .catch(microphoneError);
+
     initialize();
 
     $('.start').on('click', function() {
@@ -89,6 +133,7 @@ $(document).ready(() => {
 
     $('.stop').on('click', function() {
         playing = false;
+        cancelAnimationFrame(animate);
     });
 
     $('.reset').on('click', function() {

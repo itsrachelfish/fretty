@@ -30,9 +30,7 @@
                 right: 0;
                 display: flex;
                 justify-content: center;
-                align-items: center;
-                margin-top: 5em;
-                margin-left: 20em;
+                align-items: flex-start;
             }
 
             .count {
@@ -55,6 +53,10 @@
             <button class="start">Start</button>
             <button class="stop">Stop</button>
             <button class="reset">Reset</button>
+
+            Tempo:
+            <input class="tempo" type="range" min="30" max="300" value="60">
+            <span class="tempo">60</span>
         </div>
     </body>
 </html>

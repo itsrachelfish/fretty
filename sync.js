@@ -14,6 +14,7 @@ let interval = 1000/fps;
 let delta;
 let input = null;
 let analyser = null;
+let tempo = 1;
 
 function initialize() {
     eighth = width / 8;
@@ -47,10 +48,10 @@ function animate() {
 }
 
 function slide() {
-    // We want the measures to move at a rate of one beat per second
+    // We want the measures to move at a rate of the tempo
     // Each measure is an eighth of the screen
-    // Every frame we have to move one eighth of the screen width divided by the number of frames per second
-    const distance = eighth / fps;
+    // Every frame we have to move one eighth of the screen width divided by the number of frames per second times the tempo
+    const distance = (eighth / fps) * tempo;
     const imageData = canvasContext.getImageData(distance, 0, canvasContext.canvas.width - distance, canvasContext.canvas.height);
     canvasContext.putImageData(imageData, 0, 0);
     canvasContext.clearRect(canvasContext.canvas.width - distance, 0, distance, canvasContext.canvas.height);
@@ -83,8 +84,8 @@ function drawWaveform() {
     const centerHeight = height / 2;
 
     // Draw a box at the center of the screen
-    canvasContext.fillRect(centerWidth, centerHeight - 1, 3, volume);
-    canvasContext.fillRect(centerWidth, centerHeight + 1, 3, volume * -1);
+    canvasContext.fillRect(centerWidth, centerHeight - 1, 3 * tempo, volume);
+    canvasContext.fillRect(centerWidth, centerHeight + 1, 3 * tempo, volume * -1);
 }
 
 
@@ -145,5 +146,13 @@ $(document).ready(() => {
 
         $('.count').text(count.toString());
         initialize();
+    });
+
+    $('input.tempo').on('input', function() {
+        const beatsPerMinute = $(this).value();
+
+        // Divide the tempo by 60 to get the number of beats per minute
+        tempo = beatsPerMinute / 60;
+        $('span.tempo').text(beatsPerMinute);
     });
 });

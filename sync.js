@@ -1,11 +1,17 @@
-let width, height;
+let width, height, eighth;
 let canvas, canvasContext;
 let playing = false;
 let count = 0;
-let delta = -1;
+let offset = -1;
+
+let fps = 60;
+let now;
+var then = Date.now();
+var interval = 1000/fps;
+var delta;
 
 function initialize() {
-    let eighth = width / 8;
+    eighth = width / 8;
     canvasContext.clearRect(0, 0, width, height);
 
     for(let beat = 4; beat <= 8; beat++) {
@@ -19,27 +25,36 @@ function initialize() {
 }
 
 function animate() {
-    slide();
-    drawBeats();
-    drawWaveform();
-
     if(playing) {
         requestAnimationFrame(animate);
+
+        now = Date.now();
+        delta = now - then;
+
+        if(delta > interval) {
+            slide();
+            drawBeats();
+            drawWaveform();
+
+            then = now - (delta % interval);
+        }
     }
 }
 
 function slide() {
-    let imageData = canvasContext.getImageData(1, 0, canvasContext.canvas.width-1, canvasContext.canvas.height);
+    // We want the measures to move at a rate of one beat per second
+    // Each measure is an eighth of the screen
+    // Every frame we have to move one eighth of the screen width divided by the number of frames per second
+    const distance = eighth / fps;
+    const imageData = canvasContext.getImageData(distance, 0, canvasContext.canvas.width - distance, canvasContext.canvas.height);
     canvasContext.putImageData(imageData, 0, 0);
-    canvasContext.clearRect(canvasContext.canvas.width-1, 0, 1, canvasContext.canvas.height);
+    canvasContext.clearRect(canvasContext.canvas.width - distance, 0, distance, canvasContext.canvas.height);
 
-    delta++;
+    offset += distance;
 }
 
 function drawBeats() {
-    let eighth = width / 8;
-
-    if(delta > eighth) {
+    if(offset > eighth) {
         let position = width - 1;
 
         canvasContext.beginPath();
@@ -47,7 +62,7 @@ function drawBeats() {
         canvasContext.lineTo(position, height);
         canvasContext.stroke();
 
-        delta = 0;
+        offset = 0;
     }
 }
 
@@ -78,7 +93,7 @@ $(document).ready(() => {
 
     $('.reset').on('click', function() {
         count = 0;
-        delta = -1;
+        offset = -1;
 
         $('.count').text(count.toString());
         initialize();

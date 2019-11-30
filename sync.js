@@ -4,7 +4,7 @@ const audioContext = new AudioContext();
 let width, height, eighth;
 let canvas, canvasContext;
 let playing = false;
-let count = 0;
+let count = -3;
 let offset = -1;
 
 let fps = 60;
@@ -68,6 +68,9 @@ function drawBeats() {
         canvasContext.stroke();
 
         offset = 0;
+        count++;
+
+        $('.count').text(count.toString());
     }
 }
 
@@ -137,7 +140,7 @@ $(document).ready(() => {
     });
 
     $('.reset').on('click', function() {
-        count = 0;
+        count = -3;
         offset = -1;
 
         $('.count').text(count.toString());

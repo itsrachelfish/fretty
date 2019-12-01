@@ -7,8 +7,7 @@ let count = -3;
 let offset = -1;
 
 let fps = 60;
-let now;
-var then = Date.now();
+let then = Date.now();
 let interval = 1000/fps;
 let delta;
 let input = null;
@@ -30,11 +29,24 @@ function initialize() {
     }
 }
 
+function startPlaying() {
+    // Get the current time
+    let now = Date.now();
+
+    // Wait until the next second to start playing
+    let nextSecond = 1000 - (now % 1000);
+
+    setTimeout(function() {
+        playing = true;
+        requestAnimationFrame(animate);
+    }, nextSecond);
+}
+
 function animate() {
     if(playing) {
         requestAnimationFrame(animate);
 
-        now = Date.now();
+        let now = Date.now();
         delta = now - then;
 
         if(delta > interval) {
@@ -99,8 +111,7 @@ function microphoneSuccess(stream) {
 
     microphoneAllowed = true;
 
-    playing = true;
-    requestAnimationFrame(animate);
+    startPlaying();
 }
 
 function microphoneError(error) {
@@ -116,7 +127,6 @@ function averageVolume(array) {
         volume += array[i];
     }
 
-    // Return the avarag
     return volume / length;
 }
 
@@ -134,8 +144,7 @@ $(document).ready(() => {
 
     $('.start').on('click', function() {
         if(microphoneAllowed) {
-            playing = true;
-            requestAnimationFrame(animate);
+            startPlaying();
         } else {
             audioContext = new AudioContext();
 

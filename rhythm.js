@@ -2,30 +2,40 @@ const constraints = { audio: true, video: false };
 let analyser, input;
 let microphoneAllowed = false;
 let playing = false;
-let lastBeat = false;
 let count = -4;
+let scheduledBeat = false;
+let scheduledWaveform = false;
 
-function startPlaying() {
+function inDuration(duration, callback) {
     // Get the current time
     let now = Date.now();
 
-    // Wait until the next second to start playing
-    let nextSecond = 1000 - (now % 1000);
+    // Wait until the start of the next duration
+    let waitUntil = duration - (now % duration);
 
-    setTimeout(function() {
+    return setTimeout(callback, waitUntil);
+}
+
+function startPlaying() {
+    inDuration(1000, function() {
         playing = true;
         drawBeat();
         requestAnimationFrame(animate);
-    }, nextSecond);
+    });
 }
 
 function animate() {
     if(playing) {
-        let now = Date.now();
+        if(!scheduledBeat) {
+            scheduledBeat = inDuration(1000, function() {
+                drawBeat();
+            });
+        }
 
-        // Only draw one beat per second
-        if(now - lastBeat > 1000) {
-            drawBeat();
+        if(!scheduledWaveform) {
+            scheduledWaveform = inDuration(50, function() {
+                drawWaveform();
+            });
         }
 
         requestAnimationFrame(animate);
@@ -45,11 +55,25 @@ function drawBeat() {
     count++;
     $('.count').text(count.toString());
 
-    lastBeat = Date.now();
+    scheduledBeat = false;
 }
 
 function drawWaveform() {
-    //
+    const audioData = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(audioData);
+
+    const volume = averageVolume(audioData) * 10;
+
+    let waveform = $('section.templates .waveform').el[0].cloneNode();
+    waveform.style['height'] = volume.toString() + 'px';
+
+    waveform.addEventListener('animationend', function() {
+        $(this).remove();
+    });
+
+    $('section.background').el[0].appendChild(waveform);
+
+    scheduledWaveform = false;
 }
 
 
@@ -84,8 +108,6 @@ function averageVolume(array) {
 
 $(document).ready(() => {
     $('.start').on('click', function() {
-        startPlaying();
-        /*
         if(microphoneAllowed) {
             startPlaying();
         } else {
@@ -95,7 +117,6 @@ $(document).ready(() => {
             .then(microphoneSuccess)
             .catch(microphoneError);
         }
-        */
     });
 
     $('.stop').on('click', function() {

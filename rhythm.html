@@ -39,7 +39,8 @@
                 width: 100vw;
                 height: 100vh;
                 margin: 0 auto;
-                display: block;
+                display: flex;
+                align-items: center;
                 overflow: hidden;
             }
 
@@ -48,13 +49,35 @@
                 height: 100vh;
                 width: 2px;
                 background: #000;
-                animation-name: slide;
+                animation-name: slide-bar;
                 animation-duration: 8s;
                 animation-timing-function: linear;
             }
 
-            @keyframes slide {
+            section.background .center {
+                position: absolute;
+                height: 100vh;
+                width: 2px;
+                background: red;
+                transform: translateX(50vw);
+            }
+
+            section.background .waveform {
+                position: absolute;
+                background: #000;
+                width: 5px;
+                animation-name: slide-waveform;
+                animation-duration: 4s;
+                animation-timing-function: linear;
+            }
+
+            @keyframes slide-bar {
               from { transform: translateX(100vw); }
+              to { transform: translateX(0vw); }
+            }
+
+            @keyframes slide-waveform {
+              from { transform: translateX(50vw); }
               to { transform: translateX(0vw); }
             }
 
@@ -68,9 +91,13 @@
     </head>
 
     <body>
-        <section class="background"></section>
+        <section class="background">
+            <div class="center"></div>
+        </section>
+
         <section class="templates">
             <div class="bar"></div>
+            <div class="waveform"></div>
         </section>
 
         <div class="wrap">

@@ -60,6 +60,7 @@ function update(delta) {
         // The beats have to wrap around once they reach the edge of the screen
         if(newPosition <= 0) {
             newPosition = canvas.width + newPosition;
+            count++;
         }
 
         beats[index] = {
@@ -91,6 +92,7 @@ function draw() {
 
 function done(fps) {
     $('.fps').text(Math.round(fps).toString());
+    $('.count').text(count.toString());
 }
 
 function microphoneSuccess(stream) {

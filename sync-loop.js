@@ -5,6 +5,7 @@ let count = -3;
 let beats = [];
 let waveform = [];
 let microphoneAllowed = false;
+let tempo = 1;
 
 function initialize() {
     canvas = $('canvas').el[0];
@@ -37,13 +38,13 @@ function input() {
     const volume = averageVolume(audioData) * 10;
 
     waveform.push({
-        x: (canvas.width / 2), // - 3, // Subtract the width of each slice
+        x: (canvas.width / 2),
         y: (canvas.height / 2) - (volume / 2),
         volume: volume,
     });
 
-    // Determine how many 4 pixel wide slices there are in half of the screen size
-    const spaceAvailable = Math.floor((canvas.width / 2) / 4);
+    // Determine how many slices there are in half of the screen size
+    const spaceAvailable = Math.floor((canvas.width / 2) / (4 * tempo));
 
     if(waveform.length >= spaceAvailable) {
         waveform = waveform.slice(waveform.length - spaceAvailable);
@@ -51,8 +52,8 @@ function input() {
 }
 
 function update(delta) {
-    // Every second we should move an eighth of the screen width
-    let distance = (canvas.width / 8) / 1000;
+    // Determine the distance we should move based on the tempo
+    let distance = ((canvas.width / 8) / 1000) * tempo;
 
     beats.forEach(function(beat, index) {
         let newPosition = beat.x - (distance * delta);

@@ -38,7 +38,7 @@ function input() {
     const volume = averageVolume(audioData) * 10;
 
     waveform.push({
-        x: (canvas.width / 2),
+        x: (canvas.width / 2) + 5,
         y: (canvas.height / 2) - (volume / 2),
         volume: volume,
     });
@@ -77,17 +77,33 @@ function update(delta) {
 function draw() {
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Loop through the waveform and draw it
+    canvasContext.beginPath();
+    let reverseWaveform = [];
+
+    waveform.forEach(function(slice, index) {
+        if(index === 1) {
+            canvasContext.moveTo(slice.x, slice.y);
+        }
+
+        canvasContext.lineTo(slice.x, slice.y);
+        reverseWaveform.unshift(slice);
+    });
+
+    // Draw the bottom half of the waveform
+    reverseWaveform.forEach(function(slice, index) {
+        canvasContext.lineTo(slice.x, slice.y + slice.volume);
+    });
+
+    canvasContext.fillStyle = "#dd9896";
+    canvasContext.fill();
+
     // Loop through beats and draw them
     beats.forEach(function(beat) {
         canvasContext.beginPath();
         canvasContext.moveTo(beat.x, 0);
         canvasContext.lineTo(beat.x, canvas.height);
         canvasContext.stroke();
-    });
-
-    // Loop through the waveform and draw it
-    waveform.forEach(function(slice) {
-        canvasContext.fillRect(slice.x, slice.y, 3, slice.volume);
     });
 }
 

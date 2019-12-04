@@ -1,85 +1,119 @@
 const constraints = { audio: true, video: false };
-let analyser, input;
+
+let canvas, canvasContext, audioContext;
+let count = -3;
+let beats = [];
+let waveform = [];
 let microphoneAllowed = false;
-let playing = false;
-let count = -4;
-let scheduledBeat = false;
-let scheduledWaveform = false;
+let tempo = 1;
 
-function inDuration(duration, callback) {
-    // Get the current time
-    let now = Date.now();
+function initialize() {
+    canvas = $('canvas').el[0];
+    canvasContext = canvas.getContext("2d");
+    canvasContext.canvas.width = canvas.offsetWidth;
+    canvasContext.canvas.height = canvas.offsetHeight;
 
-    // Wait until the start of the next duration
-    let waitUntil = duration - (now % duration);
+    // Clear out any previous data
+    beats = [];
+    waveform = [];
 
-    return setTimeout(callback, waitUntil);
-}
+    let eighth = canvas.width / 8;
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
 
-function startPlaying() {
-    inDuration(1000, function() {
-        playing = true;
-        drawBeat();
-        requestAnimationFrame(animate);
-    });
-}
+    for(let beat = 1; beat <= 8; beat++) {
+        let position = beat * eighth;
 
-function animate() {
-    if(playing) {
-        if(!scheduledBeat) {
-            scheduledBeat = inDuration(1000, function() {
-                drawBeat();
-            });
-        }
-
-        if(!scheduledWaveform) {
-            scheduledWaveform = inDuration(50, function() {
-                drawWaveform();
-            });
-        }
-
-        requestAnimationFrame(animate);
+        beats.push({
+            x: position,
+        });
     }
+
+    MainLoop.setBegin(input).setUpdate(update).setDraw(draw).setEnd(done);
 }
 
-
-function drawBeat() {
-    let bar = $('section.templates .bar').el[0].cloneNode();
-
-    bar.addEventListener('animationend', function() {
-        $(this).remove();
-    });
-
-    $('section.background').el[0].appendChild(bar);
-
-    count++;
-    $('.count').text(count.toString());
-
-    scheduledBeat = false;
-}
-
-function drawWaveform() {
+function input() {
     const audioData = new Uint8Array(analyser.frequencyBinCount);
     analyser.getByteFrequencyData(audioData);
 
     const volume = averageVolume(audioData) * 10;
 
-    let waveform = $('section.templates .waveform').el[0].cloneNode();
-    waveform.style['height'] = volume.toString() + 'px';
-
-    waveform.addEventListener('animationend', function() {
-        $(this).remove();
+    waveform.push({
+        x: (canvas.width / 2) + 5,
+        y: (canvas.height / 2) - (volume / 2),
+        volume: volume,
     });
 
-    $('section.background').el[0].appendChild(waveform);
+    // Determine how many slices there are in half of the screen size
+    const spaceAvailable = Math.floor((canvas.width / 2) / (4 * tempo));
 
-    scheduledWaveform = false;
+    if(waveform.length >= spaceAvailable) {
+        waveform = waveform.slice(waveform.length - spaceAvailable);
+    }
 }
 
+function update(delta) {
+    // Determine the distance we should move based on the tempo
+    let distance = ((canvas.width / 8) / 1000) * tempo;
+
+    beats.forEach(function(beat, index) {
+        let newPosition = beat.x - (distance * delta);
+
+        // The beats have to wrap around once they reach the edge of the screen
+        if(newPosition <= 0) {
+            newPosition = canvas.width + newPosition;
+            count++;
+        }
+
+        beats[index] = {
+            x: newPosition,
+        };
+    });
+
+    waveform.forEach(function(slice, index) {
+        waveform[index].x = slice.x - (distance * delta);
+    });
+}
+
+function draw() {
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Loop through the waveform and draw it
+    canvasContext.beginPath();
+    let reverseWaveform = [];
+
+    waveform.forEach(function(slice, index) {
+        if(index === 1) {
+            canvasContext.moveTo(slice.x, slice.y);
+        }
+
+        canvasContext.lineTo(slice.x, slice.y);
+        reverseWaveform.unshift(slice);
+    });
+
+    // Draw the bottom half of the waveform
+    reverseWaveform.forEach(function(slice, index) {
+        canvasContext.lineTo(slice.x, slice.y + slice.volume);
+    });
+
+    canvasContext.fillStyle = "#dd9896";
+    canvasContext.fill();
+
+    // Loop through beats and draw them
+    beats.forEach(function(beat) {
+        canvasContext.beginPath();
+        canvasContext.moveTo(beat.x, 0);
+        canvasContext.lineTo(beat.x, canvas.height);
+        canvasContext.stroke();
+    });
+}
+
+function done(fps) {
+    $('.fps').text(Math.round(fps).toString());
+    $('.count').text(count.toString());
+}
 
 function microphoneSuccess(stream) {
     analyser = audioContext.createAnalyser();
-    analyser.smoothingTimeConstant = 0.3;
     analyser.fftSize = 1024;
 
     input = audioContext.createMediaStreamSource(stream);
@@ -95,6 +129,18 @@ function microphoneError(error) {
     console.error('Oh no...', error);
 }
 
+function startPlaying() {
+    // Get the current time
+    let now = Date.now();
+
+    // Wait until the next second to start playing
+    let nextSecond = 1000 - (now % 1000);
+
+    setTimeout(function() {
+        MainLoop.start();
+    }, nextSecond);
+}
+
 function averageVolume(array) {
     const length = array.length;
     let volume = 0;
@@ -107,6 +153,9 @@ function averageVolume(array) {
 }
 
 $(document).ready(() => {
+    initialize();
+    draw();
+
     $('.start').on('click', function() {
         if(microphoneAllowed) {
             startPlaying();
@@ -120,14 +169,21 @@ $(document).ready(() => {
     });
 
     $('.stop').on('click', function() {
-        playing = false;
-        cancelAnimationFrame(animate);
+        MainLoop.stop();
     });
 
     $('.reset').on('click', function() {
-        count = -4;
+        count = -3;
 
         $('.count').text(count.toString());
         initialize();
+    });
+
+    $('input.tempo').on('input', function() {
+        const beatsPerMinute = $(this).value();
+
+        // Divide the tempo by 60 to get the number of beats per minute
+        tempo = beatsPerMinute / 60;
+        $('span.tempo').text(beatsPerMinute);
     });
 });

@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>It's Rrythm Guitar Time</title>
+        <title>Practice Your Rhythm!</title>
 
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,7 +13,13 @@
             html, body {
                 margin: 0;
                 padding: 0;
-                overflow: hidden;
+            }
+
+            canvas {
+                width: 100vw;
+                height: 100vh;
+                margin: 0 auto;
+                display: block;
             }
 
             .wrap {
@@ -25,8 +31,16 @@
                 display: flex;
                 justify-content: center;
                 align-items: flex-start;
+                z-index: 1;
             }
 
+            .wrap .center {
+                position: absolute;
+                height: 100vh;
+                width: 2px;
+                background: #e05350;
+                z-index: -1;
+            }
             .count {
                 font-size: 44pt;
             }
@@ -35,82 +49,37 @@
                 margin: 1em;
             }
 
-            section.background {
-                width: 100vw;
-                height: 100vh;
-                margin: 0 auto;
-                display: flex;
-                align-items: center;
-                overflow: hidden;
-            }
-
-            section.background .bar {
-                position: absolute;
-                height: 100vh;
-                width: 2px;
-                background: #000;
-                animation-name: slide-bar;
-                animation-duration: 8s;
-                animation-timing-function: linear;
-            }
-
-            section.background .center {
-                position: absolute;
-                height: 100vh;
-                width: 2px;
-                background: red;
-                transform: translateX(50vw);
-            }
-
-            section.background .waveform {
-                position: absolute;
-                background: #000;
-                width: 5px;
-                animation-name: slide-waveform;
-                animation-duration: 4s;
-                animation-timing-function: linear;
-            }
-
-            @keyframes slide-bar {
-              from { transform: translateX(100vw); }
-              to { transform: translateX(0vw); }
-            }
-
-            @keyframes slide-waveform {
-              from { transform: translateX(50vw); }
-              to { transform: translateX(0vw); }
-            }
-
-            section.templates {
-                display: none;
+            p {
+                margin: 1em;
             }
         </style>
 
         <script src="./node_modules/wetfish-basic/dist/basic.js"></script>
+        <script src="./node_modules/mainloop.js/build/mainloop.min.js"></script>
         <script src="./rhythm.js"></script>
     </head>
 
     <body>
-        <section class="background">
-            <div class="center"></div>
-        </section>
-
-        <section class="templates">
-            <div class="bar"></div>
-            <div class="waveform"></div>
-        </section>
-
+        <canvas></canvas>
         <div class="wrap">
-            <div class="count">-4</div>
+            <div class="center"></div>
+
+            <div class="count">-3</div>
             <button class="start">Start</button>
             <button class="stop">Stop</button>
             <button class="reset">Reset</button>
 
-<!--
-            Tempo:
-            <input class="tempo" type="range" min="30" max="300" value="60">
-            <span class="tempo">60</span>
--->
+            <p>
+                Tempo:
+                <input class="tempo" type="range" min="30" max="300" value="60">
+                <span class="tempo">60</span>
+            </p>
+
+
+            <p>
+                FPS:
+                <span class="fps">60</span>
+            </p>
         </div>
     </body>
 </html>

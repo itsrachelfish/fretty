@@ -38,7 +38,7 @@ function input() {
     const volume = averageVolume(audioData) * 10;
 
     waveform.push({
-        x: (canvas.width / 2) + 5,
+        x: (canvas.width / 2) + (4 * tempo),
         y: (canvas.height / 2) - (volume / 2),
         volume: volume,
     });

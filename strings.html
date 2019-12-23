@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>What note is that?</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <style>
+            /* Lookin' good */
+            html, body {
+                margin: 0;
+                padding: 0;
+            }
+
+            .frets {
+                position: absolute;
+                display: flex;
+                height: 200px;
+                width: 100vw;
+                overflow: hidden;
+            }
+
+            .fret {
+                width: 2px;
+                height: 100vh;
+                background: #000;
+            }
+
+            .strings {
+                position: absolute;
+                z-index: 1;
+                width: 100vw;
+                height: 100vh;
+            }
+
+            .string {
+                width: 100%;
+                height: 1px;
+                margin: 2em 0 1em;
+                background: #ccc;
+            }
+        </style>
+
+        <script src="./node_modules/wetfish-basic/dist/basic.js"></script>
+        <script src="./strings.js"></script>
+    </head>
+
+    <body>
+        <div class="strings">
+            <div class="string one"></div>
+            <div class="string two"></div>
+            <div class="string three"></div>
+            <div class="string four"></div>
+            <div class="string five"></div>
+            <div class="string six"></div>
+        </div>
+
+        <div class="frets">
+            <div class="fret" style="transform: translateX(5vw)"></div>
+            <div class="fret" style="transform: translateX(15vw)"></div>
+            <div class="fret" style="transform: translateX(25vw)"></div>
+        </div>
+    </body>
+</html>

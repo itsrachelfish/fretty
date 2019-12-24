@@ -23,12 +23,16 @@
                 font-size: 12pt;
                 text-align: center;
                 display: inline-block;
-                width: 150px;
+                width: 50px;
                 padding: 0.5em;
                 border-top: 1px solid #ccc;
                 border-bottom: 1px solid #ccc;
                 border-right: 1px solid #000;
                 border-left: 1px solid #000;
+            }
+
+            .template {
+                display: none;
             }
         </style>
 
@@ -37,24 +41,9 @@
     </head>
 
     <body>
-        <div class="notes">
-            <div class="string">
-                <span class="note">E</span>
-                <span class="note">F</span>
-                <span class="note">F♯ / G♭</span>
-            </div>
+        <div class="notes"></div>
 
-            <div class="string">
-                <span class="note">A</span>
-                <span class="note">A♯ / B♭</span>
-                <span class="note">B</span>
-            </div>
-
-            <div class="string">
-                <span class="note">D</span>
-                <span class="note">D♯ / E♭</span>
-                <span class="note">E</span>
-            </div>
-        </div>
+        <div class="string template"></div>
+        <span class="note template"></span>
     </body>
 </html>

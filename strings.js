@@ -25,17 +25,26 @@ const strings = [
 ];
 
 function generateNotes(startingNote) {
-    let stringElement = $('.string.template').el[0].cloneNode();
-    $(stringElement).append('<span class="note">' + startingNote + '</span>');
+    let string = $('.string.template').el[0].cloneNode();
+    let width = 8;
 
-    for(let count = 1; count <= 24; count++) {
+    for(let count = 0; count <= 19; count++) {
+        let note = $('.note.template').el[0].cloneNode();
         let currentNote = (notes.indexOf(startingNote) + count) % notes.length;
 
-        $(stringElement).append('<span class="note">' + notes[currentNote] + '</span>');
+        $(note).removeClass('template');
+        $(note).text(notes[currentNote]);
+
+        if(count > 0) {
+            $(note).style({'width': `calc(${width}% - 2px)`});
+            width -= 6 / 19;
+        }
+
+        $(string).append(note);
     }
 
-    $(stringElement).removeClass('template');
-    $('.notes').append(stringElement);
+    $(string).removeClass('template');
+    $('.notes').append(string);
 }
 
 $(document).ready(() => {

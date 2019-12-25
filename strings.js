@@ -60,4 +60,18 @@ $(document).ready(() => {
         $('.note').removeClass('hover');
         $(`[note=${note}]`).addClass('hover');
     });
+
+    $('.note').on('mouseleave', function() {
+        $('.note').removeClass('hover');
+    });
+
+    $('.note').on('click', function() {
+        let note = $(this).attr('note');
+
+        if($(this).hasClass('active')) {
+            $(`[note=${note}]`).removeClass('active');
+        } else {
+            $(`[note=${note}]`).addClass('active');
+        }
+    });
 });

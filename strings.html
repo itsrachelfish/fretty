@@ -29,10 +29,15 @@
                 border-bottom: 1px solid #ccc;
                 border-right: 1px solid #000;
                 border-left: 1px solid #000;
+                cursor: pointer;
             }
 
             .template {
                 display: none;
+            }
+
+            .note.hover {
+                background-color: #eee;
             }
         </style>
 
@@ -45,5 +50,15 @@
 
         <div class="string template"></div>
         <span class="note template"></span>
+
+        <!--
+
+        Todo:
+        - Highlight similiar notes on hover
+        - Preserve highlights on click
+        - Display fret dots
+        - Option to switch between sharps and flats
+
+        -->
     </body>
 </html>

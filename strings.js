@@ -34,6 +34,7 @@ function generateNotes(startingNote) {
 
         $(note).removeClass('template');
         $(note).text(notes[currentNote]);
+        $(note).attr('note', notes[currentNote]);
 
         if(count > 0) {
             $(note).style({'width': `calc(${width}% - 2px)`});
@@ -51,5 +52,12 @@ $(document).ready(() => {
     strings.forEach((string) => {
         console.log('generating', string);
         generateNotes(string);
+    });
+
+    $('.note').on('mouseenter', function() {
+        let note = $(this).attr('note');
+
+        $('.note').removeClass('hover');
+        $(`[note=${note}]`).addClass('hover');
     });
 });

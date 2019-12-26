@@ -23,13 +23,16 @@
                 font-size: 12pt;
                 text-align: center;
                 display: inline-block;
-                width: calc(2% - 2px);
-                padding: 0.5em 0;
+                height: 2.5em;
+                line-height: 2.5em;
+                box-sizing: border-box;
+                width: 2%;
                 border-top: 1px solid #aaa;
                 border-bottom: 1px solid #aaa;
                 border-right: 1px solid #000;
                 border-left: 1px solid #000;
                 cursor: pointer;
+                vertical-align: middle;
             }
 
             .template {
@@ -58,10 +61,11 @@
         <!--
 
         Todo:
-        - Highlight similiar notes on hover
-        - Preserve highlights on click
-        - Display fret dots
+
         - Option to switch between sharps and flats
+        - Dropdown to display chords
+        - Audio analysis to detect which note you picked
+        - Audio analysis to make sure you actually hit a chord
 
         -->
     </body>
